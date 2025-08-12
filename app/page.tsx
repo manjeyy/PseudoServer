@@ -150,7 +150,7 @@ export default function Home() {
   }, [isServerRunning, handleStopServer, setAllTabs]);
 
   return (
-    <div className="h-screen flex flex-col bg-white">
+    <div className="h-screen flex flex-col bg-slate-900">
       <ProjectManager
         onSaveProject={handleSaveProject}
         onLoadProject={handleLoadProject}

@@ -46,15 +46,15 @@ export default function TabManager({
   };
 
   return (
-    <div className="flex items-center border-b bg-gray-50">
+    <div className="flex items-center border-b border-slate-800 bg-slate-900">
       <div className="flex items-center overflow-x-auto">
         {tabs.map((tab) => (
           <div
             key={tab.id}
             className={`flex items-center group relative min-w-0 ${
               activeTabId === tab.id
-                ? 'bg-white border-t-2 border-t-blue-500'
-                : 'bg-gray-100 hover:bg-gray-200'
+                ? 'bg-slate-800 border-t-2 border-t-blue-500'
+                : 'bg-slate-900 hover:bg-slate-800'
             }`}
           >
             <div
@@ -68,12 +68,12 @@ export default function TabManager({
                   onChange={(e) => setEditingName(e.target.value)}
                   onBlur={finishEditing}
                   onKeyDown={handleKeyPress}
-                  className="text-sm bg-transparent border-none outline-none min-w-0 w-24"
+                  className="text-sm border-none outline-none min-w-0 w-24 bg-slate-700 text-white"
                   autoFocus
                 />
               ) : (
                 <span
-                  className="text-sm truncate max-w-32"
+                  className="text-sm truncate max-w-32 text-slate-200"
                   onDoubleClick={() => startEditing(tab)}
                   title={tab.name}
                 >
@@ -88,7 +88,7 @@ export default function TabManager({
                   e.stopPropagation();
                   onTabDelete(tab.id);
                 }}
-                className="px-2 py-1 opacity-0 group-hover:opacity-100 hover:bg-red-500 hover:text-white transition-all"
+                className="px-2 py-1 opacity-0 group-hover:opacity-100 hover:bg-red-600 hover:text-white transition-all text-slate-400"
                 title="Close tab"
               >
                 ×
@@ -100,7 +100,7 @@ export default function TabManager({
       
       <button
         onClick={onTabAdd}
-        className="px-3 py-2 text-gray-500 hover:text-gray-700 hover:bg-gray-200 transition-colors"
+        className="px-3 py-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors"
         title="Add new tab"
       >
         +

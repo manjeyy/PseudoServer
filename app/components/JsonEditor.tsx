@@ -36,20 +36,20 @@ export default function JsonEditor({ value, onChange, route, onRouteChange }: Js
   };
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex items-center gap-4 p-3 border-b bg-gray-50">
+    <div className="flex flex-col h-full bg-gray-900 text-gray-100">
+      <div className="flex items-center gap-4 p-3 border-b border-gray-800 bg-gray-800">
         <div className="flex items-center gap-2">
-          <label htmlFor="route" className="text-sm font-medium">
+          <label htmlFor="route" className="text-sm font-medium text-gray-200">
             Route:
           </label>
           <div className="flex items-center">
-            <span className="text-sm text-gray-500">/</span>
+            <span className="text-sm text-gray-400">/</span>
             <input
               id="route"
               type="text"
               value={route}
               onChange={(e) => onRouteChange(e.target.value)}
-              className="px-2 py-1 border border-gray-300 rounded text-sm min-w-32"
+              className="px-2 py-1 border border-gray-700 rounded text-sm min-w-32 bg-gray-900 text-gray-100 placeholder-gray-500"
               placeholder="endpoint"
             />
           </div>
@@ -58,13 +58,13 @@ export default function JsonEditor({ value, onChange, route, onRouteChange }: Js
         <button
           onClick={formatJson}
           disabled={!!jsonError || !value.trim()}
-          className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+          className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 disabled:bg-gray-700 disabled:text-gray-400 disabled:cursor-not-allowed transition-colors"
         >
           Format JSON
         </button>
         
         {jsonError && (
-          <span className="text-sm text-red-500">{jsonError}</span>
+          <span className="text-sm text-red-400">{jsonError}</span>
         )}
       </div>
       
@@ -72,7 +72,7 @@ export default function JsonEditor({ value, onChange, route, onRouteChange }: Js
         <textarea
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full h-full p-4 font-mono text-sm border-none outline-none resize-none"
+          className="w-full h-full p-4 font-mono text-sm border-none outline-none resize-none bg-gray-900 text-gray-100 placeholder-gray-500"
           placeholder="Paste your JSON data here..."
           style={{ fontFamily: 'Monaco, Consolas, "Courier New", monospace' }}
         />

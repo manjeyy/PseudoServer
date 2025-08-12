@@ -29,22 +29,22 @@ export default function ProjectManager({ onSaveProject, onLoadProject, onNewProj
   };
 
   return (
-    <div className="flex items-center gap-2 p-2 border-b bg-gray-100">
+    <div className="flex items-center gap-2 p-2 border-b border-slate-800 bg-slate-900">
       <button
         onClick={onNewProject}
-        className="px-3 py-1 text-sm bg-gray-200 hover:bg-gray-300 rounded transition-colors"
+        className="px-3 py-1 text-sm bg-slate-800 hover:bg-slate-700 text-slate-200 rounded transition-colors"
       >
         New
       </button>
       
       <button
         onClick={() => setSaveDialogOpen(true)}
-        className="px-3 py-1 text-sm bg-blue-500 text-white hover:bg-blue-600 rounded transition-colors"
+        className="px-3 py-1 text-sm bg-blue-700 text-white hover:bg-blue-800 rounded transition-colors"
       >
         Save
       </button>
       
-      <label className="px-3 py-1 text-sm bg-green-500 text-white hover:bg-green-600 rounded cursor-pointer transition-colors">
+      <label className="px-3 py-1 text-sm bg-green-700 text-white hover:bg-green-800 rounded cursor-pointer transition-colors">
         Load
         <input
           type="file"
@@ -55,15 +55,15 @@ export default function ProjectManager({ onSaveProject, onLoadProject, onNewProj
       </label>
 
       {saveDialogOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h3 className="text-lg font-semibold mb-4">Save Project</h3>
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+          <div className="bg-slate-800 p-6 rounded-lg shadow-lg">
+            <h3 className="text-lg font-semibold mb-4 text-slate-100">Save Project</h3>
             <input
               type="text"
               value={projectName}
               onChange={(e) => setProjectName(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSave()}
-              className="w-full px-3 py-2 border border-gray-300 rounded mb-4"
+              className="w-full px-3 py-2 border border-slate-700 bg-slate-900 text-slate-100 rounded mb-4"
               placeholder="Project name"
               autoFocus
             />
@@ -73,14 +73,14 @@ export default function ProjectManager({ onSaveProject, onLoadProject, onNewProj
                   setSaveDialogOpen(false);
                   setProjectName('');
                 }}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                className="px-4 py-2 text-slate-400 hover:text-slate-200 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSave}
                 disabled={!projectName.trim()}
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300 transition-colors"
+                className="px-4 py-2 bg-blue-700 text-white rounded hover:bg-blue-800 disabled:bg-slate-700 disabled:text-slate-400 transition-colors"
               >
                 Save
               </button>
