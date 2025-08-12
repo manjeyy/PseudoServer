@@ -4,7 +4,7 @@ import { Tab } from '../types/tab';
 
 export class MockServer {
   private app: express.Application;
-  private server: any = null;
+  private server: any | null = null;
   private port: number = 3001;
   private tabs: Tab[] = [];
 

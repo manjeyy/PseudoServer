@@ -17,8 +17,9 @@ export default function JsonEditor({ value, onChange, route, onRouteChange }: Js
       try {
         JSON.parse(value);
         setJsonError(null);
-      } catch (error) {
+      } catch (e) {
         setJsonError('Invalid JSON format');
+        console.log(e)
       }
     } else {
       setJsonError(null);
@@ -32,6 +33,7 @@ export default function JsonEditor({ value, onChange, route, onRouteChange }: Js
       setJsonError(null);
     } catch (error) {
       setJsonError('Cannot format invalid JSON');
+      console.log(error)
     }
   };
 

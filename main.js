@@ -22,7 +22,9 @@ const createWindow = () => {
         mainWindow.loadURL('http://localhost:3000');
         mainWindow.webContents.openDevTools();
     } else {
-        mainWindow.loadFile(path.join(__dirname, 'out/index.html'));
+        // In production, load from the built static files
+        const indexPath = path.join(__dirname, 'out', 'index.html');
+        mainWindow.loadFile(indexPath);
     }
 };
 

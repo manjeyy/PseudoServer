@@ -10,7 +10,7 @@ import { ProjectData } from './types/tab';
 
 let mockServerPort = 3001;
 let mockServerRunning = false;
-const mockRoutes = new Map<string, any>();
+const mockRoutes = new Map<string, Record<string, unknown>>();
 
 export default function Home() {
   const {
@@ -78,7 +78,7 @@ export default function Home() {
         });
       }
       setIsServerRunning(true);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to start server:', error);
       alert(`Failed to start server: ${error.message}`);
     }

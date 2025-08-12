@@ -2,6 +2,8 @@
   "name": "electro",
   "version": "0.1.0",
   "private": true,
+  "author": "Manjeyy",
+  "description": "hi",
   "main": "main.js",
   "scripts": {
     "dev": "next dev --turbopack --port 3000",
@@ -9,12 +11,11 @@
     "start": "next start",
     "electron": "electron .",
     "electron-dev": "concurrently \"npm run dev\" \"wait-on http://localhost:3000 && cross-env NODE_ENV=development electron .\"",
-    "electron-build": "npm run build && electron-builder",
+    "electron-build": "next build && electron-builder",
     "lint": "next lint"
   },
   "dependencies": {
     "cors": "^2.8.5",
-    "electron": "^37.2.6",
     "express": "^4.21.2",
     "next": "15.4.6",
     "react": "19.1.0",
