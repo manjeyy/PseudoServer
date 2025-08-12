@@ -1,103 +1,189 @@
-import Image from "next/image";
+'use client';
+
+import { useState, useEffect, useCallback } from 'react';
+import ServerControls from './components/ServerControls';
+import TabManager from './components/TabManager';
+import JsonEditor from './components/JsonEditor';
+import ProjectManager from './components/ProjectManager';
+import { useTabManager } from './hooks/useTabManager';
+import { ProjectData } from './types/tab';
+
+let mockServerPort = 3001;
+let mockServerRunning = false;
+const mockRoutes = new Map<string, any>();
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const {
+    tabs,
+    activeTab,
+    activeTabId,
+    setActiveTabId,
+    addTab,
+    deleteTab,
+    renameTab,
+    updateTabContent,
+    updateTabRoute,
+    setAllTabs
+  } = useTabManager();
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+  const [serverPort, setServerPort] = useState(3001);
+  const [isServerRunning, setIsServerRunning] = useState(false);
+
+  useEffect(() => {
+    if (isServerRunning) {
+      const routes: [string, any][] = [];
+      tabs.forEach(tab => {
+        if (tab.route && tab.content.trim()) {
+          try {
+            const jsonData = JSON.parse(tab.content);
+            const route = tab.route.startsWith('/') ? tab.route : `/${tab.route}`;
+            routes.push([route, jsonData]);
+            mockRoutes.set(route, jsonData);
+          } catch (error) {
+            console.error(`Invalid JSON in tab ${tab.name}:`, error);
+          }
+        }
+      });
+      
+      if (typeof window !== 'undefined' && (window as any).electronAPI) {
+        console.log('Updating routes:', routes);
+        (window as any).electronAPI.updateRoutes(routes);
+      }
+    }
+  }, [tabs, isServerRunning]);
+
+  const handleStartServer = useCallback(async () => {
+    try {
+      const routes: [string, any][] = [];
+      tabs.forEach(tab => {
+        if (tab.route && tab.content.trim()) {
+          try {
+            const jsonData = JSON.parse(tab.content);
+            const route = tab.route.startsWith('/') ? tab.route : `/${tab.route}`;
+            routes.push([route, jsonData]);
+          } catch (error) {
+            console.error(`Invalid JSON in tab ${tab.name}:`, error);
+          }
+        }
+      });
+
+      if (typeof window !== 'undefined' && (window as any).electronAPI) {
+        console.log('Starting server with routes:', routes);
+        await (window as any).electronAPI.startServer(serverPort, routes);
+      } else {
+        mockServerPort = serverPort;
+        mockServerRunning = true;
+        routes.forEach(([route, data]) => {
+          mockRoutes.set(route, data);
+        });
+      }
+      setIsServerRunning(true);
+    } catch (error) {
+      console.error('Failed to start server:', error);
+      alert(`Failed to start server: ${error.message}`);
+    }
+  }, [serverPort, tabs]);
+
+  const handleStopServer = useCallback(async () => {
+    try {
+      if (typeof window !== 'undefined' && (window as any).electronAPI) {
+        await (window as any).electronAPI.stopServer();
+      } else {
+        mockServerRunning = false;
+      }
+      setIsServerRunning(false);
+      mockRoutes.clear();
+    } catch (error) {
+      console.error('Failed to stop server:', error);
+    }
+  }, []);
+
+  const handleSaveProject = useCallback((name: string) => {
+    const projectData: ProjectData = {
+      name,
+      port: serverPort,
+      tabs,
+      activeTabId,
+      version: '1.0.0'
+    };
+
+    const blob = new Blob([JSON.stringify(projectData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${name}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, [tabs, activeTabId, serverPort]);
+
+  const handleLoadProject = useCallback((file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const projectData: ProjectData = JSON.parse(e.target?.result as string);
+        setAllTabs(projectData.tabs);
+        setServerPort(projectData.port);
+        if (isServerRunning) {
+          handleStopServer();
+        }
+      } catch (error) {
+        console.error('Failed to load project:', error);
+        alert('Invalid project file');
+      }
+    };
+    reader.readAsText(file);
+  }, [setAllTabs, isServerRunning, handleStopServer]);
+
+  const handleNewProject = useCallback(() => {
+    if (isServerRunning) {
+      handleStopServer();
+    }
+    setAllTabs([{
+      id: Date.now().toString(),
+      name: 'New Tab',
+      route: 'api/data',
+      content: '{\n  "message": "Hello World",\n  "data": []\n}'
+    }]);
+    setServerPort(3001);
+  }, [isServerRunning, handleStopServer, setAllTabs]);
+
+  return (
+    <div className="h-screen flex flex-col bg-white">
+      <ProjectManager
+        onSaveProject={handleSaveProject}
+        onLoadProject={handleLoadProject}
+        onNewProject={handleNewProject}
+      />
+      
+      <ServerControls
+        onPortChange={setServerPort}
+        onStartServer={handleStartServer}
+        onStopServer={handleStopServer}
+        isServerRunning={isServerRunning}
+        currentPort={serverPort}
+      />
+      
+      <TabManager
+        tabs={tabs}
+        activeTabId={activeTabId}
+        onTabSelect={setActiveTabId}
+        onTabAdd={addTab}
+        onTabDelete={deleteTab}
+        onTabRename={renameTab}
+      />
+      
+      <div className="flex-1">
+        {activeTab && (
+          <JsonEditor
+            value={activeTab.content}
+            onChange={(content) => updateTabContent(activeTab.id, content)}
+            route={activeTab.route}
+            onRouteChange={(route) => updateTabRoute(activeTab.id, route)}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        )}
+      </div>
     </div>
   );
 }
