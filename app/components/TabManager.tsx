@@ -10,6 +10,7 @@ interface TabManagerProps {
   onTabAdd: () => void;
   onTabDelete: (tabId: string) => void;
   onTabRename: (tabId: string, newName: string) => void;
+  onSubRouteAdd: (tabId: string) => void;
 }
 
 export default function TabManager({
@@ -18,7 +19,8 @@ export default function TabManager({
   onTabSelect,
   onTabAdd,
   onTabDelete,
-  onTabRename
+  onTabRename,
+  onSubRouteAdd
 }: TabManagerProps) {
   const [editingTabId, setEditingTabId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
@@ -80,20 +82,41 @@ export default function TabManager({
                   {tab.name}
                 </span>
               )}
+              
+              {/* Sub-route count indicator */}
+              {tab.subRoutes && tab.subRoutes.length > 0 && (
+                <span className="ml-2 px-1 py-0.5 text-xs bg-blue-500 text-white rounded">
+                  {tab.subRoutes.length}
+                </span>
+              )}
             </div>
             
-            {tabs.length > 1 && (
+            <div className="flex items-center">
+              {/* Add sub-route button */}
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  onTabDelete(tab.id);
+                  onSubRouteAdd(tab.id);
                 }}
-                className="px-2 py-1 opacity-0 group-hover:opacity-100 hover:bg-red-600 hover:text-white transition-all text-slate-400"
-                title="Close tab"
+                className="px-1 py-1 opacity-0 group-hover:opacity-100 hover:bg-green-600 hover:text-white transition-all text-slate-400 text-xs"
+                title="Add sub route"
               >
-                ×
+                +
               </button>
-            )}
+              
+              {tabs.length > 1 && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onTabDelete(tab.id);
+                  }}
+                  className="px-2 py-1 opacity-0 group-hover:opacity-100 hover:bg-red-600 hover:text-white transition-all text-slate-400"
+                  title="Close tab"
+                >
+                  ×
+                </button>
+              )}
+            </div>
           </div>
         ))}
       </div>

@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import ServerControls from './components/ServerControls';
 import TabManager from './components/TabManager';
+import SubRouteManager from './components/SubRouteManager';
 import JsonEditor from './components/JsonEditor';
 import ProjectManager from './components/ProjectManager';
 import { useTabManager } from './hooks/useTabManager';
@@ -17,13 +18,21 @@ export default function Home() {
     tabs,
     activeTab,
     activeTabId,
+    activeSubRoute,
+    activeSubRouteId,
     setActiveTabId,
+    setActiveSubRouteId,
     addTab,
     deleteTab,
     renameTab,
     updateTabContent,
     updateTabRoute,
-    setAllTabs
+    setAllTabs,
+    addSubRoute,
+    deleteSubRoute,
+    renameSubRoute,
+    updateSubRouteContent,
+    updateSubRouteRoute
   } = useTabManager();
 
   const [serverPort, setServerPort] = useState(3001);
@@ -33,6 +42,7 @@ export default function Home() {
     if (isServerRunning) {
       const routes: [string, any][] = [];
       tabs.forEach(tab => {
+        // Add main tab route
         if (tab.route && tab.content.trim()) {
           try {
             const jsonData = JSON.parse(tab.content);
@@ -42,6 +52,23 @@ export default function Home() {
           } catch (error) {
             console.error(`Invalid JSON in tab ${tab.name}:`, error);
           }
+        }
+        
+        // Add sub-routes
+        if (tab.subRoutes) {
+          tab.subRoutes.forEach(subRoute => {
+            if (subRoute.route && subRoute.content.trim()) {
+              try {
+                const jsonData = JSON.parse(subRoute.content);
+                const baseRoute = tab.route.startsWith('/') ? tab.route : `/${tab.route}`;
+                const fullRoute = `${baseRoute}/${subRoute.route}`;
+                routes.push([fullRoute, jsonData]);
+                mockRoutes.set(fullRoute, jsonData);
+              } catch (error) {
+                console.error(`Invalid JSON in sub-route ${subRoute.name}:`, error);
+              }
+            }
+          });
         }
       });
       
@@ -56,6 +83,7 @@ export default function Home() {
     try {
       const routes: [string, any][] = [];
       tabs.forEach(tab => {
+        // Add main tab route
         if (tab.route && tab.content.trim()) {
           try {
             const jsonData = JSON.parse(tab.content);
@@ -64,6 +92,22 @@ export default function Home() {
           } catch (error) {
             console.error(`Invalid JSON in tab ${tab.name}:`, error);
           }
+        }
+        
+        // Add sub-routes
+        if (tab.subRoutes) {
+          tab.subRoutes.forEach(subRoute => {
+            if (subRoute.route && subRoute.content.trim()) {
+              try {
+                const jsonData = JSON.parse(subRoute.content);
+                const baseRoute = tab.route.startsWith('/') ? tab.route : `/${tab.route}`;
+                const fullRoute = `${baseRoute}/${subRoute.route}`;
+                routes.push([fullRoute, jsonData]);
+              } catch (error) {
+                console.error(`Invalid JSON in sub-route ${subRoute.name}:`, error);
+              }
+            }
+          });
         }
       });
 
@@ -104,6 +148,7 @@ export default function Home() {
       port: serverPort,
       tabs,
       activeTabId,
+      activeSubRouteId,
       version: '1.0.0'
     };
 
@@ -116,7 +161,7 @@ export default function Home() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-  }, [tabs, activeTabId, serverPort]);
+  }, [tabs, activeTabId, activeSubRouteId, serverPort]);
 
   const handleLoadProject = useCallback((file: File) => {
     const reader = new FileReader();
@@ -125,6 +170,9 @@ export default function Home() {
         const projectData: ProjectData = JSON.parse(e.target?.result as string);
         setAllTabs(projectData.tabs);
         setServerPort(projectData.port);
+        if (projectData.activeSubRouteId) {
+          setActiveSubRouteId(projectData.activeSubRouteId);
+        }
         if (isServerRunning) {
           handleStopServer();
         }
@@ -144,9 +192,11 @@ export default function Home() {
       id: Date.now().toString(),
       name: 'New Tab',
       route: 'api/data',
-      content: '{\n  "message": "Hello World",\n  "data": []\n}'
+      content: '{\n  "message": "Hello World",\n  "data": []\n}',
+      subRoutes: []
     }]);
     setServerPort(3001);
+    setActiveSubRouteId(null);
   }, [isServerRunning, handleStopServer, setAllTabs]);
 
   return (
@@ -168,21 +218,47 @@ export default function Home() {
       <TabManager
         tabs={tabs}
         activeTabId={activeTabId}
-        onTabSelect={setActiveTabId}
+        onTabSelect={(tabId) => {
+          setActiveTabId(tabId);
+          setActiveSubRouteId(null);
+        }}
         onTabAdd={addTab}
         onTabDelete={deleteTab}
         onTabRename={renameTab}
+        onSubRouteAdd={(tabId) => addSubRoute(tabId)}
       />
       
-      <div className="flex-1">
-        {activeTab && (
-          <JsonEditor
-            value={activeTab.content}
-            onChange={(content) => updateTabContent(activeTab.id, content)}
-            route={activeTab.route}
-            onRouteChange={(route) => updateTabRoute(activeTab.id, route)}
+      <div className="flex flex-1">
+        {activeTab && activeTab.subRoutes && activeTab.subRoutes.length > 0 && (
+          <SubRouteManager
+            subRoutes={activeTab.subRoutes}
+            activeSubRouteId={activeSubRouteId}
+            baseRoute={activeTab.route}
+            onSubRouteSelect={setActiveSubRouteId}
+            onSubRouteAdd={() => addSubRoute(activeTab.id)}
+            onSubRouteDelete={(subRouteId) => deleteSubRoute(activeTab.id, subRouteId)}
+            onSubRouteRename={(subRouteId, newName) => renameSubRoute(activeTab.id, subRouteId, newName)}
           />
         )}
+        
+        <div className="flex-1">
+          {activeTab && (
+            <JsonEditor
+              value={activeSubRoute ? activeSubRoute.content : activeTab.content}
+              onChange={(content) => 
+                activeSubRoute 
+                  ? updateSubRouteContent(activeTab.id, activeSubRoute.id, content)
+                  : updateTabContent(activeTab.id, content)
+              }
+              route={activeSubRoute ? `${activeTab.route}/${activeSubRoute.route}` : activeTab.route}
+              onRouteChange={(route) => 
+                activeSubRoute
+                  ? updateSubRouteRoute(activeTab.id, activeSubRoute.id, route.replace(`${activeTab.route}/`, ''))
+                  : updateTabRoute(activeTab.id, route)
+              }
+            />
+          )}
+        </div>
       </div>
     </div>
   );
