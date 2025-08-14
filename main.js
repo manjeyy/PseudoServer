@@ -82,7 +82,7 @@ if (!ipcMain.listenerCount('start-server')) {
             setupRoutes(routes);
             
             return new Promise((resolve, reject) => {
-                mockServer = mockApp.listen(port, 'localhost', () => {
+                mockServer = mockApp.listen(port, '0.0.0.0', () => {
                     console.log(`Mock server started on http://localhost:${port}`);
                     resolve();
                 });

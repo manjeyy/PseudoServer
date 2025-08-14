@@ -40,8 +40,8 @@
     "wait-on": "^7.2.0"
   },
   "build": {
-    "appId": "com.electro.mockserver",
-    "productName": "Mock Server",
+    "appId": "com.manjeyy.pseudoserver",
+    "productName": "PseudoServer",
     "directories": {
       "output": "dist"
     },
