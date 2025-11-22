@@ -1,5 +1,5 @@
 {
-  "name": "electro",
+  "name": "mocktopus",
   "version": "0.1.0",
   "private": true,
   "author": "Manjeyy",
@@ -85,8 +85,8 @@
     "wait-on": "^7.2.0"
   },
   "build": {
-    "appId": "com.manjeyy.pseudoserver",
-    "productName": "PseudoServer",
+    "appId": "com.manjeylala.mocktopus",
+    "productName": "Mocktopus",
     "directories": {
       "output": "dist"
     },
