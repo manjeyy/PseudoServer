@@ -1,102 +1,101 @@
-# PseudoServer - Mock API Server with Electron and Next.js
+![1763820852637](./public/tut1.png)
 
-PseudoServer is a desktop application built with Electron and Next.js that allows you to create and manage mock API servers. It provides a user-friendly interface to define API routes, paste JSON data, and serve it as a mock API. This is perfect for testing and prototyping applications without needing a backend.
+<div align="center">
 
-## Features
+# Mocktopus 🐙
 
-- **Mock API Server**: Start and stop a mock server with customizable routes and JSON responses.
-- **Tab Management**: Add, delete, and rename tabs to manage multiple API endpoints.
-- **JSON Editor**: Paste and format JSON data with validation.
-- **Route Configuration**: Define custom routes for each API endpoint.
-- **Project Management**: Save and load projects to persist your work.
-- **Electron Integration**: Runs as a desktop application with a Next.js UI.
+**A Zero Setup and Standalone API Mocking Tool**
 
-## Installation
+<!-- Badges -->
+<p>
+  <a href="https://github.com/manjeyy/PseudoServer/releases">
+    <img src="https://img.shields.io/badge/Download-App-blue?style=for-the-badge&logo=windows" alt="Download" />
+  </a>
+  <a href="https://github.com/manjeyy/PseudoServer/pulls">
+    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge" alt="PRs Welcome" />
+  </a>
+</p>
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/manjeyy/PseudoServer.git
-   cd PseudoServer
-   ```
+<p>
+  <a href="https://github.com/manjeyy/PseudoServer/issues?q=is%3Aissue+is%3Aclosed">
+    <img src="https://img.shields.io/github/issues-closed/manjeyy/PseudoServer?style=flat-square" alt="GitHub closed issues" />
+  </a>
+  <a href="https://github.com/manjeyy/PseudoServer/commits/main">
+    <img src="https://img.shields.io/github/last-commit/manjeyy/PseudoServer?style=flat-square" alt="Last Commit" />
+  </a>
+  <a href="https://chrome.google.com/webstore">
+    <img src="https://img.shields.io/chrome-web-store/rating/dfhgkpdlehgmgbafabpphfdhaerjg?style=flat-square" alt="Chrome Web Store Rating" />
+  </a>
+  <a href="https://chrome.google.com/webstore">
+    <img src="https://img.shields.io/chrome-web-store/stars/dfhgkpdlehgmgbafabpphfdhaerjg?style=flat-square" alt="Chrome Web Store Reviews" />
+  </a>
+  <a href="https://chrome.google.com/webstore">
+    <img src="https://img.shields.io/chrome-web-store/users/dfhgkpdlehgmgbafabpphfdhaerjg?style=flat-square" alt="Chrome Web Store Downloads" />
+  </a>
+</p>
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+<br />
 
-3. Run the application in development mode:
-   ```bash
-   npm run electron-dev
-   ```
+[**Report Bug**](https://github.com/manjeyy/PseudoServer/issues) • [**Request Feature**](https://github.com/manjeyy/PseudoServer/issues)
 
-4. Build the application for production:
-   ```bash
-   npm run electron-build
-   ```
-
-## Usage
-
-### Starting the Server
-
-1. Open the application.
-2. Set the desired port number in the top-left corner.
-3. Click the "Start Server" button to start the mock server.
-4. The server will be accessible at `http://localhost:<port>`.
-
-### Managing Tabs
-
-- **Add a Tab**: Click the `+` button to add a new tab.
-- **Rename a Tab**: Double-click on a tab name to rename it.
-- **Delete a Tab**: Click the `×` button on a tab to delete it.
-
-### Configuring Routes
-
-1. Select a tab.
-2. Enter a route name (e.g., `api/users`) in the route input field.
-3. Paste your JSON data into the editor.
-4. The data will be served at `http://localhost:<port>/<route>`.
-
-### Saving and Loading Projects
-
-- **Save Project**: Click the "Save" button, enter a project name, and save it as a `.json` file.
-- **Load Project**: Click the "Load" button and select a previously saved `.json` file.
-
-### Health Check
-
-Access the `/health` endpoint to view all active routes:
-```bash
-http://localhost:<port>/health
-```
-
-## Development
-
-### Folder Structure
-
-- `app/`: Contains the Next.js application.
-  - `components/`: Reusable React components.
-  - `hooks/`: Custom React hooks.
-  - `lib/`: Utility libraries (e.g., mock server logic).
-  - `types/`: TypeScript type definitions.
-- `main.js`: Electron main process file.
-- `preload.js`: Preload script for Electron.
-
-### Scripts
-
-- `npm run dev`: Start the Next.js development server.
-- `npm run electron-dev`: Start the Electron app in development mode.
-- `npm run build`: Build the Next.js app for production.
-- `npm run electron-build`: Build the Electron app for production.
-
-## Troubleshooting
-
-- **Port in Use**: If the desired port is already in use, change the port number in the application.
-- **Invalid JSON**: Ensure the JSON data in the editor is valid. Use the "Format JSON" button to fix formatting issues.
-- **Server Not Starting**: Check the terminal for errors and ensure no other process is using the same port.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+</div>
 
 ---
 
-Enjoy using PseudoServer for your mock API needs!
+## 📖 Description
+
+**Mocktopus** is a powerful, standalone API mocking tool designed to streamline your frontend development workflow. With zero setup required, you can instantly spin up a mock server, create endpoints, and manage your API responses with ease.
+
+Whether you are testing edge cases, developing offline, or waiting for backend implementation, Mocktopus provides a seamless experience to keep your development moving forward.
+
+## ✨ Features
+
+*   **🚀 Zero Setup:** Open the app, set a port, and you're ready to go.
+*   **⚡ Instant Mocking:** Create new endpoints and paste your JSON responses instantly.
+*   **🛠️ JSON Editor:** Built-in editor for managing complex JSON structures.
+*   **📂 Project Management:** Organize your mocks into projects for better maintainability.
+*   **🎛️ Server Controls:** Start, stop, and restart your mock server with a click.
+*   **🛣️ Sub-route Manager:** Handle nested routes and dynamic paths effortlessly.
+*   **📑 Tab Manager:** Work on multiple endpoints simultaneously.
+
+## 📸 Screenshots
+
+<div align="center">
+  <img src="./public/tut2.png" alt="Screenshot 1" width="800"/>
+  <br/><br/>
+  <img src="./public/tut3.png" alt="Screenshot 2" width="800"/>
+  <br/><br/>
+  <img src="./public/tut4.png" alt="Screenshot 3" width="800"/>
+</div>
+
+## 🚀 Getting Started
+
+1.  **Download** the latest release from the [Releases page](https://github.com/manjeyy/PseudoServer/releases).
+2.  **Install** the application.
+3.  **Open** Mocktopus.
+4.  **Set a Port** (e.g., 3000).
+5.  **Create Endpoints** and paste your JSON.
+6.  **Start Server** and BOOM! 💥
+
+## 🛠️ Built With
+
+*   [Next.js](https://nextjs.org/)
+*   [Electron](https://www.electronjs.org/)
+*   [Tailwind CSS](https://tailwindcss.com/)
+*   [Shadcn UI](https://ui.shadcn.com/)
+
+## 🤝 Contributing
+
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+1.  Fork the Project
+2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4.  Push to the Branch (`git push origin feature/AmazingFeature`)
+5.  Open a Pull Request
+
+## 📝 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+
