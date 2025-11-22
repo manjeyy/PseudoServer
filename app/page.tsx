@@ -8,6 +8,7 @@ import JsonEditor from './components/JsonEditor';
 import ProjectManager from './components/ProjectManager';
 import { useTabManager } from './hooks/useTabManager';
 import { ProjectData } from './types/tab';
+import { ModeToggle } from '@/components/ui/mode-toggle';
 
 let mockServerPort = 3001;
 let mockServerRunning = false;
@@ -53,7 +54,7 @@ export default function Home() {
             console.error(`Invalid JSON in tab ${tab.name}:`, error);
           }
         }
-        
+
         // Add sub-routes
         if (tab.subRoutes) {
           tab.subRoutes.forEach(subRoute => {
@@ -71,7 +72,7 @@ export default function Home() {
           });
         }
       });
-      
+
       if (typeof window !== 'undefined' && (window as any).electronAPI) {
         console.log('Updating routes:', routes);
         (window as any).electronAPI.updateRoutes(routes);
@@ -93,7 +94,7 @@ export default function Home() {
             console.error(`Invalid JSON in tab ${tab.name}:`, error);
           }
         }
-        
+
         // Add sub-routes
         if (tab.subRoutes) {
           tab.subRoutes.forEach(subRoute => {
@@ -204,11 +205,12 @@ export default function Home() {
       {/* Sidebar */}
       <aside className="w-64 border-r border-border bg-sidebar flex flex-col">
         <div className="p-4 border-b border-sidebar-border">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-bold">P</span>
+          <div className="flex items-center gap-2 mb-4 flex-row justify-between">
+            <div className=" flex items-center justify-center">
+              <span className="w-8 h-8 rounded-lg bg-primary text-primary-foreground font-bold flex items-center justify-center">M</span>
+              <h1 className="font-bold text-lg text-sidebar-foreground ml-2">Mocktopus</h1>
             </div>
-            <h1 className="font-bold text-lg text-sidebar-foreground">PseudoServer</h1>
+            <ModeToggle />
           </div>
           <ProjectManager
             onSaveProject={handleSaveProject}
@@ -216,7 +218,7 @@ export default function Home() {
             onNewProject={handleNewProject}
           />
         </div>
-        
+
         <div className="flex-1 overflow-y-auto">
           {activeTab && activeTab.subRoutes && activeTab.subRoutes.length > 0 ? (
             <SubRouteManager
@@ -232,7 +234,7 @@ export default function Home() {
             <div className="p-4 text-sm text-muted-foreground text-center">
               No sub-routes available.
               <br />
-              <button 
+              <button
                 onClick={() => activeTab && addSubRoute(activeTab.id)}
                 className="mt-2 text-primary hover:underline"
               >
@@ -246,8 +248,8 @@ export default function Home() {
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0 bg-background">
         {/* Header */}
-        <header className="h-16 border-b border-border flex items-center justify-between px-4 bg-background shrink-0 gap-4">
-          <div className="flex-1 min-w-0 overflow-x-auto">
+        <header className="h-auto py-2 border-b border-border flex items-center justify-between px-4 bg-background shrink-0 gap-4">
+          <div className="flex-1 h-auto min-w-0 overflow-x-auto">
             <TabManager
               tabs={tabs}
               activeTabId={activeTabId}
@@ -277,13 +279,13 @@ export default function Home() {
           {activeTab && (
             <JsonEditor
               value={activeSubRoute ? activeSubRoute.content : activeTab.content}
-              onChange={(content) => 
-                activeSubRoute 
+              onChange={(content) =>
+                activeSubRoute
                   ? updateSubRouteContent(activeTab.id, activeSubRoute.id, content)
                   : updateTabContent(activeTab.id, content)
               }
               route={activeSubRoute ? `${activeTab.route}/${activeSubRoute.route}` : activeTab.route}
-              onRouteChange={(route) => 
+              onRouteChange={(route) =>
                 activeSubRoute
                   ? updateSubRouteRoute(activeTab.id, activeSubRoute.id, route.replace(`${activeTab.route}/`, ''))
                   : updateTabRoute(activeTab.id, route)

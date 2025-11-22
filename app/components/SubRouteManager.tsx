@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { SubRoute } from '../types/tab';
-import { Plus, Trash2, FileJson, MoreVertical } from 'lucide-react';
+import { Plus, Trash2, FileJson, MoreVertical, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -112,9 +112,9 @@ export default function SubRouteManager({
                                     e.stopPropagation();
                                     onSubRouteDelete(subRoute.id);
                                 }}
-                                className="opacity-0 group-hover:opacity-100 p-1.5 hover:bg-destructive/10 hover:text-destructive rounded transition-all"
+                                className="opacity-100 group-hover:opacity-100 p-1.5 hover:bg-destructive/10 hover:text-destructive rounded transition-all"
                             >
-                                <Trash2 className="h-4 w-4" />
+                                <X className="h-5 w-5" />
                             </button>
                         )}
                     </div>

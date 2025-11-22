@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Tab } from '../types/tab';
 import { X, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 interface TabManagerProps {
   tabs: Tab[];
@@ -50,19 +51,19 @@ export default function TabManager({
 
   return (
     <div className="flex items-center h-full">
-      <div className="flex items-center h-full overflow-x-auto no-scrollbar">
+      <div className="flex items-center h-full overflow-x-auto no-scrollbar gap-2 ">
         {tabs.map((tab) => (
           <div
             key={tab.id}
             className={cn(
-              "group relative flex items-center h-full px-6 border-r border-border cursor-pointer transition-colors min-w-[160px] max-w-[240px]",
+              "group relative flex h-10 items-center px-3 rounded-md cursor-pointer transition-colors min-w-[160px] max-w-[240px]",
               activeTabId === tab.id
-                ? "bg-background text-primary border-t-2 border-t-primary"
-                : "bg-muted/30 text-muted-foreground hover:bg-muted/50 border-t-2 border-t-transparent"
+                ? "bg-primary/80 text-white  border-t-primary"
+                : "bg-muted/30 text-muted-foreground hover:bg-muted/50"
             )}
             onClick={() => onTabSelect(tab.id)}
           >
-            <div className="flex-1 truncate mr-3">
+            <div className="flex-1 truncate mr-0">
               {editingTabId === tab.id ? (
                 <input
                   type="text"
@@ -86,27 +87,31 @@ export default function TabManager({
             </div>
             
             {tabs.length > 1 && (
-              <button
+              <Button
+              variant="ghost"
                 onClick={(e) => {
                   e.stopPropagation();
                   onTabDelete(tab.id);
                 }}
-                className="opacity-0 group-hover:opacity-100 p-1 hover:bg-destructive/10 hover:text-destructive rounded-sm transition-all"
+                className="opacity-100 p-1 hover:bg-destructive/10 hover:text-destructive rounded-sm transition-all"
               >
                 <X className="h-4 w-4" />
-              </button>
+              </Button>
             )}
           </div>
         ))}
       </div>
       
-      <button
-        onClick={onTabAdd}
-        className="h-full px-4 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors border-r border-border"
-        title="Add new tab"
-      >
+      <Button className='ml-2' variant="ghost" onClick={onTabAdd}>
+
         <Plus className="h-5 w-5" />
-      </button>
+      </Button>
     </div>
   );
 }
+
+      //   <button
+        
+      //   //className="h-full px-4 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors border-r border-border"
+      //   //title="Add new tab"
+      // ></button>
