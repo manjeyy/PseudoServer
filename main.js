@@ -131,7 +131,7 @@ if (!ipcMain.listenerCount('update-routes')) {
             setupRoutes(routes);
             
             return new Promise((resolve, reject) => {
-                mockServer = mockApp.listen(port, 'localhost', () => {
+                mockServer = mockApp.listen(port, '0.0.0.0', () => {
                     console.log(`Mock server restarted on http://localhost:${port}`);
                     resolve();
                 });

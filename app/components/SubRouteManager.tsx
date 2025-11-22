@@ -2,6 +2,9 @@
 
 import { useState } from 'react';
 import { SubRoute } from '../types/tab';
+import { Plus, Trash2, FileJson, MoreVertical } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface SubRouteManagerProps {
     subRoutes: SubRoute[];
@@ -47,91 +50,73 @@ export default function SubRouteManager({
         }
     };
 
-    if (subRoutes.length === 0) {
-        return (
-            <div className="w-48 border-r border-gray-800 bg-gray-900 p-2">
-                <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-gray-300">Sub Routes</span>
-                    <button
-                        onClick={onSubRouteAdd}
-                        className="px-2 py-1 text-xs bg-blue-700 text-white rounded hover:bg-blue-800 transition-colors"
-                        title="Add sub route"
-                    >
-                        +
-                    </button>
-                </div>
-                <div className="text-xs text-gray-500 text-center py-4">
-                    No sub routes yet
-                </div>
-            </div>
-        );
-    }
-
     return (
-        <div className="w-48 border-r border-gray-800 bg-gray-900 flex flex-col">
-            <div className="flex items-center justify-between p-2 border-b border-gray-800">
-                <span className="text-sm font-medium text-gray-300">Sub Routes</span>
-                <button
+        <div className="flex flex-col h-full">
+            <div className="flex items-center justify-between px-4 py-3 text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+                <span>Sub Routes</span>
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
                     onClick={onSubRouteAdd}
-                    className="px-2 py-1 text-xs bg-blue-700 text-white rounded hover:bg-blue-800 transition-colors"
                     title="Add sub route"
                 >
-                    +
-                </button>
+                    <Plus className="h-5 w-5" />
+                </Button>
             </div>
             
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto px-2 space-y-1">
                 {subRoutes.map((subRoute) => (
                     <div
                         key={subRoute.id}
-                        className={`group relative border-b border-gray-800 ${
+                        className={cn(
+                            "group flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer transition-colors text-base",
                             activeSubRouteId === subRoute.id
-                                ? 'bg-blue-900 border-l-4 border-l-blue-700'
-                                : 'hover:bg-gray-800'
-                        }`}
+                                ? "bg-primary/10 text-primary"
+                                : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                        )}
+                        onClick={() => onSubRouteSelect(subRoute.id)}
                     >
-                        <div
-                            className="flex items-center justify-between p-2 cursor-pointer"
-                            onClick={() => onSubRouteSelect(subRoute.id)}
-                        >
-                            <div className="flex-1 min-w-0">
-                                {editingSubRouteId === subRoute.id ? (
-                                    <input
-                                        type="text"
-                                        value={editingName}
-                                        onChange={(e) => setEditingName(e.target.value)}
-                                        onBlur={finishEditing}
-                                        onKeyDown={handleKeyPress}
-                                        className="w-full text-xs bg-transparent border-none outline-none text-gray-100"
-                                        autoFocus
-                                    />
-                                ) : (
-                                    <div
-                                        className="text-xs font-medium truncate text-gray-100"
+                        <FileJson className="h-5 w-5 shrink-0 opacity-70" />
+                        
+                        <div className="flex-1 min-w-0">
+                            {editingSubRouteId === subRoute.id ? (
+                                <input
+                                    type="text"
+                                    value={editingName}
+                                    onChange={(e) => setEditingName(e.target.value)}
+                                    onBlur={finishEditing}
+                                    onKeyDown={handleKeyPress}
+                                    className="w-full bg-transparent border border-primary/50 rounded px-1 text-sm outline-none"
+                                    autoFocus
+                                    onClick={(e) => e.stopPropagation()}
+                                />
+                            ) : (
+                                <div className="flex flex-col">
+                                    <span 
+                                        className="font-medium truncate"
                                         onDoubleClick={() => startEditing(subRoute)}
-                                        title={subRoute.name}
                                     >
                                         {subRoute.name}
-                                    </div>
-                                )}
-                                <div className="text-xs text-gray-400 truncate" title={`${baseRoute}/${subRoute.route}`}>
-                                    /{subRoute.route}
+                                    </span>
+                                    <span className="text-xs opacity-60 truncate">
+                                        /{subRoute.route}
+                                    </span>
                                 </div>
-                            </div>
-                            
-                            {subRoutes.length > 1 && (
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        onSubRouteDelete(subRoute.id);
-                                    }}
-                                    className="ml-2 px-1 py-1 opacity-0 group-hover:opacity-100 hover:bg-red-700 hover:text-white rounded transition-all text-xs text-gray-400"
-                                    title="Delete sub route"
-                                >
-                                    ×
-                                </button>
                             )}
                         </div>
+                        
+                        {subRoutes.length > 1 && (
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onSubRouteDelete(subRoute.id);
+                                }}
+                                className="opacity-0 group-hover:opacity-100 p-1.5 hover:bg-destructive/10 hover:text-destructive rounded transition-all"
+                            >
+                                <Trash2 className="h-4 w-4" />
+                            </button>
+                        )}
                     </div>
                 ))}
             </div>

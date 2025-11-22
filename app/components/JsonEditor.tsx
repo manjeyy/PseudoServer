@@ -1,6 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Braces, AlertCircle } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface JsonEditorProps {
   value: string;
@@ -38,44 +42,55 @@ export default function JsonEditor({ value, onChange, route, onRouteChange }: Js
   };
 
   return (
-    <div className="flex flex-col h-full bg-gray-900 text-gray-100">
-      <div className="flex items-center gap-4 p-3 border-b border-gray-800 bg-gray-800">
-        <div className="flex items-center gap-2">
-          <label htmlFor="route" className="text-sm font-medium text-gray-200">
-            Route:
-          </label>
-          <div className="flex items-center">
-            <span className="text-sm text-gray-400">/</span>
-            <input
-              id="route"
+    <div className="flex flex-col h-full bg-background">
+      <div className="flex items-center gap-4 p-4 border-b border-border bg-muted/10">
+        <div className="flex items-center gap-3 flex-1">
+          <span className="text-base font-medium text-muted-foreground whitespace-nowrap">
+            GET
+          </span>
+          <div className="flex items-center flex-1 max-w-md relative">
+            <span className="absolute left-3 text-muted-foreground text-base">/</span>
+            <Input
               type="text"
               value={route}
               onChange={(e) => onRouteChange(e.target.value)}
-              className="px-2 py-1 border border-gray-700 rounded text-sm min-w-32 bg-gray-900 text-gray-100 placeholder-gray-500"
+              className="pl-6 font-mono text-base h-10"
               placeholder="endpoint"
             />
           </div>
         </div>
         
-        <button
-          onClick={formatJson}
-          disabled={!!jsonError || !value.trim()}
-          className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 disabled:bg-gray-700 disabled:text-gray-400 disabled:cursor-not-allowed transition-colors"
-        >
-          Format JSON
-        </button>
-        
-        {jsonError && (
-          <span className="text-sm text-red-400">{jsonError}</span>
-        )}
+        <div className="flex items-center gap-2">
+          {jsonError && (
+            <div className="flex items-center gap-1 text-destructive text-sm mr-2">
+              <AlertCircle className="h-4 w-4" />
+              <span>{jsonError}</span>
+            </div>
+          )}
+          
+          <Button
+            onClick={formatJson}
+            disabled={!!jsonError || !value.trim()}
+            variant="secondary"
+            size="default"
+            className="gap-2"
+          >
+            <Braces className="h-4 w-4" />
+            Format JSON
+          </Button>
+        </div>
       </div>
       
       <div className="flex-1 relative">
         <textarea
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full h-full p-4 font-mono text-sm border-none outline-none resize-none bg-gray-900 text-gray-100 placeholder-gray-500"
+          className={cn(
+            "w-full h-full p-6 font-mono text-base border-none outline-none resize-none bg-background text-foreground placeholder:text-muted-foreground/50 focus:ring-0 leading-relaxed",
+            jsonError && "bg-destructive/5"
+          )}
           placeholder="Paste your JSON data here..."
+          spellCheck={false}
           style={{ fontFamily: 'Monaco, Consolas, "Courier New", monospace' }}
         />
       </div>

@@ -200,48 +200,80 @@ export default function Home() {
   }, [isServerRunning, handleStopServer, setAllTabs]);
 
   return (
-    <div className="h-screen flex flex-col bg-slate-900">
-      <ProjectManager
-        onSaveProject={handleSaveProject}
-        onLoadProject={handleLoadProject}
-        onNewProject={handleNewProject}
-      />
-      
-      <ServerControls
-        onPortChange={setServerPort}
-        onStartServer={handleStartServer}
-        onStopServer={handleStopServer}
-        isServerRunning={isServerRunning}
-        currentPort={serverPort}
-      />
-      
-      <TabManager
-        tabs={tabs}
-        activeTabId={activeTabId}
-        onTabSelect={(tabId) => {
-          setActiveTabId(tabId);
-          setActiveSubRouteId(null);
-        }}
-        onTabAdd={addTab}
-        onTabDelete={deleteTab}
-        onTabRename={renameTab}
-        onSubRouteAdd={(tabId) => addSubRoute(tabId)}
-      />
-      
-      <div className="flex flex-1">
-        {activeTab && activeTab.subRoutes && activeTab.subRoutes.length > 0 && (
-          <SubRouteManager
-            subRoutes={activeTab.subRoutes}
-            activeSubRouteId={activeSubRouteId}
-            baseRoute={activeTab.route}
-            onSubRouteSelect={setActiveSubRouteId}
-            onSubRouteAdd={() => addSubRoute(activeTab.id)}
-            onSubRouteDelete={(subRouteId) => deleteSubRoute(activeTab.id, subRouteId)}
-            onSubRouteRename={(subRouteId, newName) => renameSubRoute(activeTab.id, subRouteId, newName)}
+    <div className="flex h-screen bg-background text-foreground overflow-hidden">
+      {/* Sidebar */}
+      <aside className="w-64 border-r border-border bg-sidebar flex flex-col">
+        <div className="p-4 border-b border-sidebar-border">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+              <span className="text-primary-foreground font-bold">P</span>
+            </div>
+            <h1 className="font-bold text-lg text-sidebar-foreground">PseudoServer</h1>
+          </div>
+          <ProjectManager
+            onSaveProject={handleSaveProject}
+            onLoadProject={handleLoadProject}
+            onNewProject={handleNewProject}
           />
-        )}
+        </div>
         
-        <div className="flex-1">
+        <div className="flex-1 overflow-y-auto">
+          {activeTab && activeTab.subRoutes && activeTab.subRoutes.length > 0 ? (
+            <SubRouteManager
+              subRoutes={activeTab.subRoutes}
+              activeSubRouteId={activeSubRouteId}
+              baseRoute={activeTab.route}
+              onSubRouteSelect={setActiveSubRouteId}
+              onSubRouteAdd={() => addSubRoute(activeTab.id)}
+              onSubRouteDelete={(subRouteId) => deleteSubRoute(activeTab.id, subRouteId)}
+              onSubRouteRename={(subRouteId, newName) => renameSubRoute(activeTab.id, subRouteId, newName)}
+            />
+          ) : (
+            <div className="p-4 text-sm text-muted-foreground text-center">
+              No sub-routes available.
+              <br />
+              <button 
+                onClick={() => activeTab && addSubRoute(activeTab.id)}
+                className="mt-2 text-primary hover:underline"
+              >
+                Create one?
+              </button>
+            </div>
+          )}
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col min-w-0 bg-background">
+        {/* Header */}
+        <header className="h-16 border-b border-border flex items-center justify-between px-4 bg-background shrink-0 gap-4">
+          <div className="flex-1 min-w-0 overflow-x-auto">
+            <TabManager
+              tabs={tabs}
+              activeTabId={activeTabId}
+              onTabSelect={(tabId) => {
+                setActiveTabId(tabId);
+                setActiveSubRouteId(null);
+              }}
+              onTabAdd={addTab}
+              onTabDelete={deleteTab}
+              onTabRename={renameTab}
+              onSubRouteAdd={(tabId) => addSubRoute(tabId)}
+            />
+          </div>
+          <div className="shrink-0">
+            <ServerControls
+              onPortChange={setServerPort}
+              onStartServer={handleStartServer}
+              onStopServer={handleStopServer}
+              isServerRunning={isServerRunning}
+              currentPort={serverPort}
+            />
+          </div>
+        </header>
+
+        {/* Editor Area */}
+        <div className="flex-1 overflow-hidden relative">
           {activeTab && (
             <JsonEditor
               value={activeSubRoute ? activeSubRoute.content : activeTab.content}
@@ -259,7 +291,7 @@ export default function Home() {
             />
           )}
         </div>
-      </div>
+      </main>
     </div>
   );
 }

@@ -1,6 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Play, Square, Globe } from 'lucide-react';
 
 interface ServerControlsProps {
   onPortChange: (port: number) => void;
@@ -25,39 +28,39 @@ export default function ServerControls({
   };
 
   return (
-    <div className="flex items-center gap-4 p-4 border-b border-gray-700 bg-gray-900">
-      <div className="flex items-center gap-2">
-        <label htmlFor="port" className="text-sm font-medium text-gray-200">
-          Port:
-        </label>
-        <input
-          id="port"
+    <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 bg-muted/50 px-3 py-1 rounded-md border border-input">
+        <Globe className="h-4 w-4 text-muted-foreground" />
+        <span className="text-sm font-medium text-muted-foreground">Port:</span>
+        <Input
           type="number"
           value={port}
           onChange={(e) => handlePortChange(parseInt(e.target.value) || 3001)}
-          className="w-20 px-2 py-1 border border-gray-700 rounded text-sm bg-gray-800 text-gray-100 focus:border-blue-500"
+          className="w-20 h-7 px-2 py-0 border-none bg-transparent text-sm focus-visible:ring-0 text-foreground"
           min="1000"
           max="65535"
           disabled={isServerRunning}
         />
       </div>
       
-      <button
+      <Button
         onClick={isServerRunning ? onStopServer : onStartServer}
-        className={`px-4 py-2 rounded text-sm font-medium transition-colors ${
-          isServerRunning
-            ? 'bg-red-600 hover:bg-red-700 text-white'
-            : 'bg-green-600 hover:bg-green-700 text-white'
-        }`}
+        variant={isServerRunning ? "destructive" : "default"}
+        size="sm"
+        className="gap-2"
       >
-        {isServerRunning ? 'Stop Server' : 'Start Server'}
-      </button>
-      
-      {isServerRunning && (
-        <span className="text-sm text-green-400 font-medium">
-          Server running on http://localhost:{currentPort}
-        </span>
-      )}
+        {isServerRunning ? (
+          <>
+            <Square className="h-4 w-4 fill-current" />
+            Stop
+          </>
+        ) : (
+          <>
+            <Play className="h-4 w-4 fill-current" />
+            Start
+          </>
+        )}
+      </Button>
     </div>
   );
 }

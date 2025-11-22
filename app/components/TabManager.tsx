@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { Tab } from '../types/tab';
+import { X, Plus } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface TabManagerProps {
   tabs: Tab[];
@@ -20,7 +22,6 @@ export default function TabManager({
   onTabAdd,
   onTabDelete,
   onTabRename,
-  onSubRouteAdd
 }: TabManagerProps) {
   const [editingTabId, setEditingTabId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
@@ -48,21 +49,20 @@ export default function TabManager({
   };
 
   return (
-    <div className="flex items-center border-b border-slate-800 bg-slate-900">
-      <div className="flex items-center overflow-x-auto">
+    <div className="flex items-center h-full">
+      <div className="flex items-center h-full overflow-x-auto no-scrollbar">
         {tabs.map((tab) => (
           <div
             key={tab.id}
-            className={`flex items-center group relative min-w-0 ${
+            className={cn(
+              "group relative flex items-center h-full px-6 border-r border-border cursor-pointer transition-colors min-w-[160px] max-w-[240px]",
               activeTabId === tab.id
-                ? 'bg-slate-800 border-t-2 border-t-blue-500'
-                : 'bg-slate-900 hover:bg-slate-800'
-            }`}
+                ? "bg-background text-primary border-t-2 border-t-primary"
+                : "bg-muted/30 text-muted-foreground hover:bg-muted/50 border-t-2 border-t-transparent"
+            )}
+            onClick={() => onTabSelect(tab.id)}
           >
-            <div
-              className="flex items-center px-3 py-2 cursor-pointer"
-              onClick={() => onTabSelect(tab.id)}
-            >
+            <div className="flex-1 truncate mr-3">
               {editingTabId === tab.id ? (
                 <input
                   type="text"
@@ -70,63 +70,42 @@ export default function TabManager({
                   onChange={(e) => setEditingName(e.target.value)}
                   onBlur={finishEditing}
                   onKeyDown={handleKeyPress}
-                  className="text-sm border-none outline-none min-w-0 w-24 bg-slate-700 text-white"
+                  className="w-full bg-transparent border-none outline-none text-base font-medium"
                   autoFocus
+                  onClick={(e) => e.stopPropagation()}
                 />
               ) : (
                 <span
-                  className="text-sm truncate max-w-32 text-slate-200"
+                  className="text-base font-medium truncate block"
                   onDoubleClick={() => startEditing(tab)}
                   title={tab.name}
                 >
                   {tab.name}
                 </span>
               )}
-              
-              {/* Sub-route count indicator */}
-              {tab.subRoutes && tab.subRoutes.length > 0 && (
-                <span className="ml-2 px-1 py-0.5 text-xs bg-blue-500 text-white rounded">
-                  {tab.subRoutes.length}
-                </span>
-              )}
             </div>
             
-            <div className="flex items-center">
-              {/* Add sub-route button */}
+            {tabs.length > 1 && (
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  onSubRouteAdd(tab.id);
+                  onTabDelete(tab.id);
                 }}
-                className="px-1 py-1 opacity-0 group-hover:opacity-100 hover:bg-green-600 hover:text-white transition-all text-slate-400 text-xs"
-                title="Add sub route"
+                className="opacity-0 group-hover:opacity-100 p-1 hover:bg-destructive/10 hover:text-destructive rounded-sm transition-all"
               >
-                +
+                <X className="h-4 w-4" />
               </button>
-              
-              {tabs.length > 1 && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onTabDelete(tab.id);
-                  }}
-                  className="px-2 py-1 opacity-0 group-hover:opacity-100 hover:bg-red-600 hover:text-white transition-all text-slate-400"
-                  title="Close tab"
-                >
-                  ×
-                </button>
-              )}
-            </div>
+            )}
           </div>
         ))}
       </div>
       
       <button
         onClick={onTabAdd}
-        className="px-3 py-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors"
+        className="h-full px-4 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors border-r border-border"
         title="Add new tab"
       >
-        +
+        <Plus className="h-5 w-5" />
       </button>
     </div>
   );

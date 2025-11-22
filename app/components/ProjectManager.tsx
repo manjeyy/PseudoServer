@@ -1,6 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { FolderOpen, Plus, Save } from 'lucide-react';
 
 interface ProjectManagerProps {
   onSaveProject: (name: string) => void;
@@ -29,61 +32,76 @@ export default function ProjectManager({ onSaveProject, onLoadProject, onNewProj
   };
 
   return (
-    <div className="flex items-center gap-2 p-2 border-b border-slate-800 bg-slate-900">
-      <button
-        onClick={onNewProject}
-        className="px-3 py-1 text-sm bg-slate-800 hover:bg-slate-700 text-slate-200 rounded transition-colors"
+    <div className="flex flex-col gap-2 w-full">
+      <div className="flex gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onNewProject}
+          className="flex-1 justify-start gap-2"
+        >
+          <Plus className="h-4 w-4" />
+          New
+        </Button>
+        
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setSaveDialogOpen(true)}
+          className="flex-1 justify-start gap-2"
+        >
+          <Save className="h-4 w-4" />
+          Save
+        </Button>
+      </div>
+
+      <Button
+        variant="outline"
+        size="sm"
+        className="w-full justify-start gap-2 relative"
+        asChild
       >
-        New
-      </button>
-      
-      <button
-        onClick={() => setSaveDialogOpen(true)}
-        className="px-3 py-1 text-sm bg-blue-700 text-white hover:bg-blue-800 rounded transition-colors"
-      >
-        Save
-      </button>
-      
-      <label className="px-3 py-1 text-sm bg-green-700 text-white hover:bg-green-800 rounded cursor-pointer transition-colors">
-        Load
-        <input
-          type="file"
-          accept=".json"
-          onChange={handleFileLoad}
-          className="hidden"
-        />
-      </label>
+        <label className="cursor-pointer">
+          <FolderOpen className="h-4 w-4" />
+          Load Project
+          <input
+            type="file"
+            accept=".json"
+            onChange={handleFileLoad}
+            className="hidden"
+          />
+        </label>
+      </Button>
 
       {saveDialogOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-          <div className="bg-slate-800 p-6 rounded-lg shadow-lg">
-            <h3 className="text-lg font-semibold mb-4 text-slate-100">Save Project</h3>
-            <input
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-card border border-border p-6 rounded-lg shadow-lg w-96">
+            <h3 className="text-lg font-semibold mb-4 text-card-foreground">Save Project</h3>
+            <Input
               type="text"
               value={projectName}
               onChange={(e) => setProjectName(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSave()}
-              className="w-full px-3 py-2 border border-slate-700 bg-slate-900 text-slate-100 rounded mb-4"
+              className="mb-4"
               placeholder="Project name"
               autoFocus
             />
             <div className="flex gap-2 justify-end">
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => {
                   setSaveDialogOpen(false);
                   setProjectName('');
                 }}
-                className="px-4 py-2 text-slate-400 hover:text-slate-200 transition-colors"
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={handleSave}
                 disabled={!projectName.trim()}
-                className="px-4 py-2 bg-blue-700 text-white rounded hover:bg-blue-800 disabled:bg-slate-700 disabled:text-slate-400 transition-colors"
               >
                 Save
-              </button>
+              </Button>
             </div>
           </div>
         </div>
