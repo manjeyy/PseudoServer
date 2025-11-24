@@ -1,0 +1,14 @@
+services:
+  mocktopus:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app:cached
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - DISPLAY=${DISPLAY:-:0}
+    network_mode: host 
+    # devices:
+    #   - /dev/dri:/dev/dri

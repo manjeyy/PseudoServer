@@ -8,6 +8,18 @@ let mockServer = null;
 let mockApp = null;
 
 const createWindow = () => {
+
+    if (process.env.NODE_ENV === 'development') {
+        const fs = require('fs');
+        const path = require('path');
+        const manifestPath = path.join(__dirname, '..', '.next', 'server', 'middleware-manifest.json');
+
+        if (!fs.existsSync(manifestPath)) {
+            fs.mkdirSync(path.dirname(manifestPath), { recursive: true });
+            fs.writeFileSync(manifestPath, JSON.stringify({}));
+        }
+    }
+
     mainWindow = new BrowserWindow({
         width: 1200,
         height: 800,
@@ -51,7 +63,7 @@ const setupRoutes = (routes) => {
         mockApp.use(cors());
         mockApp.use(express.json());
     }
-    
+
     routes.forEach(([route, data]) => {
         console.log(`Setting up route: ${route}`);
         mockApp.get(route, (req, res) => {
@@ -59,10 +71,10 @@ const setupRoutes = (routes) => {
             res.json(data);
         });
     });
-    
+
     mockApp.get('/health', (req, res) => {
-        res.json({ 
-            status: 'ok', 
+        res.json({
+            status: 'ok',
             routes: routes.map(([route]) => route),
             timestamp: new Date().toISOString()
         });
@@ -73,7 +85,7 @@ if (!ipcMain.listenerCount('start-server')) {
     ipcMain.handle('start-server', async (event, port, routes) => {
         try {
             console.log(`Starting server on port ${port} with routes:`, routes);
-            
+
             if (mockServer) {
                 console.log('Stopping existing server...');
                 await new Promise((resolve) => {
@@ -81,15 +93,15 @@ if (!ipcMain.listenerCount('start-server')) {
                 });
                 mockServer = null;
             }
-            
+
             setupRoutes(routes);
-            
+
             return new Promise((resolve, reject) => {
                 mockServer = mockApp.listen(port, '0.0.0.0', () => {
                     console.log(`Mock server started on http://localhost:${port}`);
                     resolve();
                 });
-                
+
                 mockServer.on('error', (error) => {
                     console.error('Server error:', error);
                     reject(error);
@@ -123,22 +135,22 @@ if (!ipcMain.listenerCount('update-routes')) {
         if (mockServer) {
             const port = mockServer.address().port;
             console.log(`Restarting server on port ${port} with updated routes`);
-            
+
             await new Promise((resolve) => {
                 mockServer.close(() => {
                     mockServer = null;
                     resolve();
                 });
             });
-            
+
             setupRoutes(routes);
-            
+
             return new Promise((resolve, reject) => {
                 mockServer = mockApp.listen(port, '0.0.0.0', () => {
                     console.log(`Mock server restarted on http://localhost:${port}`);
                     resolve();
                 });
-                
+
                 mockServer.on('error', (error) => {
                     console.error('Server restart error:', error);
                     reject(error);

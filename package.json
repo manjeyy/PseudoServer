@@ -10,7 +10,7 @@
     "build": "next build",
     "start": "next start",
     "electron": "electron .",
-    "electron-dev": "concurrently \"npm run dev\" \"wait-on http://localhost:3000 && cross-env NODE_ENV=development electron .\"",
+    "electron-dev": "concurrently \"npm run dev\" \"wait-on http://localhost:3000 && electron . --no-sandbox\"",
     "electron-build": "next build && electron-builder",
     "lint": "next lint"
   },
